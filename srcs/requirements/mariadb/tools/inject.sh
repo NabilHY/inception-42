@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+source /run/secrets/db_credentials.env
+
 echo "Injecting database and user ..."
 
 echo "Secrets loaded:"

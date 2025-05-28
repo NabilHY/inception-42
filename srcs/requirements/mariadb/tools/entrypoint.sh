@@ -1,9 +1,6 @@
 #!/bin/bash
 set -e
 
-# Load secrets (mounted via volume from secrets/)
-source /run/secrets/db_credentials.env
-
 # Start MariaDB safely
 mysqld_safe &
 
