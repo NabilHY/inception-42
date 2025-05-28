@@ -1,0 +1,9 @@
+services:
+  mariadb:
+    build: ./requirements/mariadb
+    volumes:
+      - ./secrets:/run/secrets
+    entrypoint: ["/tools/entrypoint.sh"]
+    restart: always
+    ports:
+      - 3306:3306
