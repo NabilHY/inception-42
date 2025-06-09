@@ -3,11 +3,12 @@ services:
     build: ./requirements/mariadb
     volumes:
       - mariadb_data:/var/lib/mysql
-      - ./secrets:/run/secrets
     entrypoint: ["/tools/entrypoint.sh"]
     restart: always
     ports:
       - 3306:3306
+    secrets:
+      - db_credentials
   wordpress:
     build: ./requirements/wordpress
     volumes:
@@ -17,6 +18,14 @@ services:
     restart: always
     ports:
       - "8080:80"
+    secrets:
+      - wp_credentials
+
+secrets:
+  db_credentials:
+    file: ../secrets/db_credentials.env
+  wp_credentials:
+    file: ../secrets/wp_credentials.env
 volumes:
   mariadb_data:
   wp_data:

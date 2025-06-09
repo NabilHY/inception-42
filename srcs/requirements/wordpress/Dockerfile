@@ -19,8 +19,10 @@ RUN apt update && \
     php-zip && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
+RUN apt-get update && apt-get install -y \
+    curl \
+ && rm -rf /var/lib/apt/lists/*
 
-# RUN mkdir /etc/apache2/sites-available
 
 COPY ./tools/wordpress.conf /etc/apache2/sites-available/wordpress.conf
 
@@ -32,9 +34,9 @@ RUN chown -R www-data:www-data /srv/www && \
 
 RUN curl https://wordpress.org/latest.tar.gz | tar zx --strip-components=1 -C /srv/www
 
-RUN sudo a2ensite wordpress
-RUN sudo a2enmod rewrite
-RUN sudo a2dissite 000-default
+RUN a2ensite wordpress
+RUN a2enmod rewrite
+RUN a2dissite 000-default
 
 CMD ["apache2ctl", "-D", "FOREGROUND"]
 
