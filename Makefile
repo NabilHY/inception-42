@@ -4,7 +4,7 @@ COMPOSE_PATH=srcs/docker-compose.yml
 build:
 	echo "Building Docker Images 🐳"
 	docker-compose -f $(COMPOSE_PATH) build 
-	echo "=== Done ==="
+	# echo "=== Done ==="
 up:
 	echo "Launching Containers on background"
 	docker-compose -f $(COMPOSE_PATH)  up -d 
