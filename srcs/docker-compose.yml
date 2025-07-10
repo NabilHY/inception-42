@@ -9,23 +9,23 @@ services:
       - 3306:3306
     secrets:
       - db_credentials
-  wordpress:
-    build: ./requirements/wordpress
-    volumes:
-      - wp_data:/srv/www
-    depends_on: 
-      - mariadb
-    restart: always
-    ports:
-      - "8080:80"
-    secrets:
-      - wp_credentials
+  # wordpress:
+  #   build: ./requirements/wordpress
+  #   volumes:
+  #     - wp_data:/srv/www
+  #   depends_on: 
+  #     - mariadb
+  #   restart: always
+  #   ports:
+  #     - "8080:80"
+  #   secrets:
+  #     - wp_credentials
 
 secrets:
   db_credentials:
-    file: ../secrets/db_credentials.env
-  wp_credentials:
-    file: ../secrets/wp_credentials.env
+    file: ../secrets/db_credentials
+  # wp_credentials:
+  #   file: ../secrets/wp_credentials
 volumes:
   mariadb_data:
-  wp_data:
+  # wp_data:
