@@ -1,25 +1,54 @@
-COMPOSE_PATH=srcs/docker-compose.yml
-.PHONY: build up down clean restart logs ps
+COMPOSE = docker compose -f srcs/docker-compose.yml
+
+.PHONY: build up down clean restart logs ps psa status
 
 build:
-	echo "Building Docker Images 🐳"
-	docker-compose -f $(COMPOSE_PATH) build 
-	# echo "=== Done ==="
+	@echo "🔧 Building Docker images..."
+	@$(COMPOSE) build --no-cache mariadb
+	@echo "✅ Build completed."
+
 up:
-	echo "Launching Containers on background"
-	docker-compose -f $(COMPOSE_PATH)  up -d 
+	@echo "🚀 Starting containers in background..."
+	@$(COMPOSE) up -d --build
+	@$(COMPOSE) ps
+
 down:
-	echo "Stop and delete containers, volumes and networks"
-	docker-compose -f $(COMPOSE_PATH) down 
+	@echo "🛑 Stopping and removing containers, networks..."
+	@$(COMPOSE) down -v --remove-orphans
+
 clean:
-	docker-compose -f $(COMPOSE_PATH) down -v --remove-orphans 
+	@echo "🔥 Full cleanup: containers, volumes, and orphans..."
+	@$(COMPOSE) down -v --remove-orphans
+
+restart:
+	@echo "🔄 Restarting environment..."
+	@$(MAKE) down
+	@$(MAKE) up
 
 logs:
-	docker-compose -f $(COMPOSE_PATH) logs -f 
+	@echo "📜 Tailing logs (press Ctrl+C to stop)..."
+	@$(COMPOSE) logs -f
+
 ps:
-	docker-compose -f $(COMPOSE_PATH) ps 
+	@$(COMPOSE) ps
+
 psa:
-	docker-compose -f $(COMPOSE_PATH) ps -a 
+	@$(COMPOSE) ps -a
 
+status:
+	@echo "📊 Current Docker status:"
+	@docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
 
-restart: down up
+re:
+	@echo "🔄 Rebuilding and restarting environment..."
+	@$(MAKE) nuke
+	@$(MAKE) down
+	@$(MAKE) build
+	@$(MAKE) restart
+	@echo "✅ Environment rebuilt and restarted."
+
+nuke:
+	@echo "💣 Nuke all containers, images, and volumes..."
+	@docker system prune -a --volumes -f
+	@echo "✅ Nuke completed."
+

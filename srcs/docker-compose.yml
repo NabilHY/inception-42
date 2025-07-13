@@ -9,6 +9,8 @@ services:
       - 3306:3306
     secrets:
       - db_credentials
+    networks:
+      - inception
   # wordpress:
   #   build: ./requirements/wordpress
   #   volumes:
@@ -20,7 +22,16 @@ services:
   #     - "8080:80"
   #   secrets:
   #     - wp_credentials
-
+  nginx:
+    build: ./requirements/nginx
+    volumes:
+      - wordpress_data:/var/www/html
+    entrypoint: ["/tools/entrypoint.sh"]
+    restart: always
+    ports:
+      - 80:443
+    networks:
+      - inception
 secrets:
   db_credentials:
     file: ../secrets/db_credentials
@@ -28,4 +39,8 @@ secrets:
   #   file: ../secrets/wp_credentials
 volumes:
   mariadb_data:
+  wordpress_data:
   # wp_data:
+networks:
+  inception:
+    driver: bridge

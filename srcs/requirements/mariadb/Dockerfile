@@ -1,17 +1,9 @@
-FROM debian:bullseye
+FROM alpine:latest
 
-RUN apt update && apt install -y mariadb-server
+RUN apk update && apk add --no-cache mariadb mariadb-client mariadb-openrc \
+    && mysql_install_db --user=mysql --basedir=/usr --datadir=/var/lib/mysql
 
-RUN mkdir -p /docker-entrypoint-initdb.d
 
-COPY ./tools/inject.sh /tools/inject.sh
-
-COPY ./tools/entrypoint.sh /tools/entrypoint.sh
-
-COPY ./db-init/init.sql /docker-entrypoint-initdb.d/init.sql
+COPY tools/entrypoint.sh /tools/entrypoint.sh
 
 RUN chmod +x /tools/entrypoint.sh
-
-RUN chmod +x /tools/inject.sh
-
-CMD ["mysqld_safe"]
