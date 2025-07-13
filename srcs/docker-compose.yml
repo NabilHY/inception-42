@@ -11,17 +11,6 @@ services:
       - db_credentials
     networks:
       - inception
-  # wordpress:
-  #   build: ./requirements/wordpress
-  #   volumes:
-  #     - wp_data:/srv/www
-  #   depends_on: 
-  #     - mariadb
-  #   restart: always
-  #   ports:
-  #     - "8080:80"
-  #   secrets:
-  #     - wp_credentials
   nginx:
     build: ./requirements/nginx
     volumes:
@@ -29,7 +18,7 @@ services:
     entrypoint: ["/tools/entrypoint.sh"]
     restart: always
     ports:
-      - 80:443
+      - 443:443
     networks:
       - inception
 secrets:
@@ -40,7 +29,6 @@ secrets:
 volumes:
   mariadb_data:
   wordpress_data:
-  # wp_data:
 networks:
   inception:
     driver: bridge
