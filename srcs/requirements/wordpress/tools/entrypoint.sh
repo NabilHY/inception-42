@@ -24,8 +24,22 @@ if ( ! defined( 'ABSPATH' ) )
 require_once ABSPATH . 'wp-settings.php';
 EOF
 
+curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
 
-echo "WordPress configuration file created at /var/www/html/wp-config.php"
-cat /var/www/html/wp-config.php
+chmod +x wp-cli.phar
+
+mv wp-cli.phar /usr/local/bin/wp
+
+wp --info
+
+wp core install \
+  --url="${WP_SITE_URL}" \
+  --title="${WP_SITE_TITLE}" \
+  --admin_user="${WP_ADMIN_USER}" \
+  --admin_password="${WP_ADMIN_PASSWORD}" \
+  --admin_email="${WP_ADMIN_EMAIL}" \
+  --skip-email \
+  --path=/var/www/html \
+  --allow-root
 
 exec "$@"
