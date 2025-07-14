@@ -1,34 +1,46 @@
 services:
+  wordpress:
+    container_name: wordpress
+    build: ./requirements/wordpress
+    volumes:
+      - wordpress_data:/var/www/html
+    restart: always
+    depends_on: 
+      - mariadb
+    networks:
+      - inception
+    env_file:
+      - ../secrets/wp_credentials
+
   mariadb:
+    container_name: mariadb
     build: ./requirements/mariadb
     volumes:
       - mariadb_data:/var/lib/mysql
-    entrypoint: ["/tools/entrypoint.sh"]
     restart: always
-    ports:
-      - 3306:3306
-    secrets:
-      - db_credentials
     networks:
       - inception
+    env_file:
+      - ../secrets/wp_credentials
+
+
   nginx:
+    container_name: nginx
     build: ./requirements/nginx
     volumes:
       - wordpress_data:/var/www/html
-    entrypoint: ["/tools/entrypoint.sh"]
     restart: always
     ports:
       - 443:443
+    depends_on:
+      - wordpress
     networks:
       - inception
-secrets:
-  db_credentials:
-    file: ../secrets/db_credentials
-  # wp_credentials:
-  #   file: ../secrets/wp_credentials
+
 volumes:
   mariadb_data:
   wordpress_data:
+
+
 networks:
   inception:
-    driver: bridge

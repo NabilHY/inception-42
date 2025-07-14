@@ -1,25 +1,27 @@
 #!/bin/sh
 set -e
 
-# Start MariaDB safely
 echo "Starting MariaDB..."
-mariadbd-safe &
+# mariadbd-safe --socket=/run/mysqld/mysqld.sock &
 
-# Wait a few seconds for MariaDB to come up
-sleep 5
+# Wait longer for MariaDB to initialize
+sleep 10
 
-source /run/secrets/db_credentials
-
-echo "Injecting database and user ..."
-
-mariadb -u root -p"$MYSQL_ROOT_PASSWORD" -e "
-CREATE DATABASE IF NOT EXISTS \`$MYSQL_DATABASE\`;
-CREATE USER IF NOT EXISTS '$MYSQL_USER'@'%' IDENTIFIED BY '$MYSQL_PASSWORD';
-GRANT ALL PRIVILEGES ON \`$MYSQL_DATABASE\`.* TO '$MYSQL_USER'@'%';
+if [ ! -d "/var/lib/mysql/mysql" ]; then
+    mariadb-install-db --user=mysql --datadir=/var/lib/mysql --skip-test-db
+    mariadbd --user=mysql --bootstrap << EOF
 FLUSH PRIVILEGES;
-"
+ALTER USER 'root'@'localhost' IDENTIFIED BY '$MYSQL_ROOT_PASSWORD';
+CREATE DATABASE IF NOT EXISTS \`$WORDPRESS_DB_NAME\`;
+CREATE USER IF NOT EXISTS '$WORDPRESS_DB_USER'@'%' IDENTIFIED BY '$WORDPRESS_DB_PASSWORD';
+GRANT ALL PRIVILEGES ON $WORDPRESS_DB_NAME.* TO '$WORDPRESS_DB_USER'@'%';
+FLUSH PRIVILEGES;
+EOF
+fi
 
-echo "DB Injected succesfully"
+echo "DB Injected successfully"
 
-# Keep container alive (or replace with proper exec later)
-wait
+exec mariadbd --user=mysql
+
+
+

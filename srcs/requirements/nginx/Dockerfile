@@ -27,6 +27,6 @@ COPY nginx.conf /etc/nginx/nginx.conf
 
 COPY tools/entrypoint.sh /tools/entrypoint.sh
 
-COPY index.html /var/www/html/index.html
-
 RUN chmod +x /tools/entrypoint.sh
+
+ENTRYPOINT [ "/tools/entrypoint.sh" ]

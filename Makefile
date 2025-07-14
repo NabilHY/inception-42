@@ -4,7 +4,7 @@ COMPOSE = docker compose -f srcs/docker-compose.yml
 
 build:
 	@echo "🔧 Building Docker images..."
-	@$(COMPOSE) build --no-cache mariadb
+	@$(COMPOSE) build mariadb nginx wordpress
 	@echo "✅ Build completed."
 
 up:

@@ -2,12 +2,11 @@ FROM debian:bullseye
 
 RUN apt update && \
     DEBIAN_FRONTEND=noninteractive apt install -y \
-    apache2 \
     curl \
     sudo \
     ghostscript \
-    libapache2-mod-php \
     php \
+    php-fpm \
     php-bcmath \
     php-curl \
     php-imagick \
@@ -19,27 +18,32 @@ RUN apt update && \
     php-zip && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
-RUN apt-get update && apt-get install -y \
-    curl \
- && rm -rf /var/lib/apt/lists/*
+COPY tools/entrypoint.sh tools/entrypoint.sh
 
+RUN chmod +x tools/entrypoint.sh
 
-COPY ./tools/wordpress.conf /etc/apache2/sites-available/wordpress.conf
+RUN mkdir -p /var/www/html
 
-RUN mkdir -p /srv/www
-RUN curl https://wordpress.org/latest.tar.gz | tar zx -C /srv/www
-RUN chown -R www-data:www-data /srv/www
-RUN chown -R www-data:www-data /srv/www && \
-    chmod -R 755 /srv/www
+RUN curl -s https://wordpress.org/latest.tar.gz | tar -xz --strip-components=1 -C /var/www/html && \
+    chown -R nobody:nogroup /var/www/html && \
+    chmod -R 755 /var/www/html
 
-RUN curl https://wordpress.org/latest.tar.gz | tar zx --strip-components=1 -C /srv/www
+# Use dynamic PHP version path
+RUN PHP_VERSION=$(php -r 'echo PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;') && \
+    CONF_FILE="/etc/php/$PHP_VERSION/fpm/pool.d/www.conf" && \
+    sed -i 's|^user = .*|user = nobody|' "$CONF_FILE" && \
+    sed -i 's|^group = .*|group = nogroup|' "$CONF_FILE" && \
+    sed -i 's|^listen = .*|listen = 9000|' "$CONF_FILE" && \
+    sed -i 's|^;*clear_env = .*|clear_env = no|' "$CONF_FILE"
 
-RUN a2ensite wordpress
-RUN a2enmod rewrite
-RUN a2dissite 000-default
+RUN mkdir -p /run/php && chown -R nobody:nogroup /run/php
 
-CMD ["apache2ctl", "-D", "FOREGROUND"]
+RUN ln -s /usr/sbin/php-fpm7.4 /usr/sbin/php-fpm
 
+WORKDIR /var/www/html
+
+ENTRYPOINT [ "/tools/entrypoint.sh" ]
+CMD ["php-fpm7.4", "-F"]
 
 
 
