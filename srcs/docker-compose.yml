@@ -23,7 +23,6 @@ services:
     env_file:
       - ../secrets/wp_credentials
 
-
   nginx:
     container_name: nginx
     build: ./requirements/nginx
@@ -36,6 +35,18 @@ services:
       - wordpress
     networks:
       - inception
+
+  adminer:
+    container_name: adminer
+    image: adminer
+    networks:
+      - inception
+    expose:
+      - 8080
+    depends_on:
+      - mariadb
+    restart: always
+  
 
 volumes:
   mariadb_data:
