@@ -42,4 +42,7 @@ wp core install \
   --path=/var/www/html \
   --allow-root
 
+wp  theme activate twentytwentyfour  --allow-root
+
+
 exec "$@"

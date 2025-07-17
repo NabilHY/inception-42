@@ -28,6 +28,7 @@ services:
     build: ./requirements/nginx
     volumes:
       - wordpress_data:/var/www/html
+      - static_site_data:/var/www/html/static/
     restart: always
     ports:
       - 443:443
@@ -41,16 +42,43 @@ services:
     image: adminer
     networks:
       - inception
-    expose:
-      - 8080
     depends_on:
       - mariadb
     restart: always
+
+
+  static_site:
+    container_name: static_site
+    build: ./requirements/static_site
+    networks:
+      - inception
+    depends_on:
+      - nginx
+    volumes:
+      - static_site_data:/static/
   
 
 volumes:
   mariadb_data:
+      name: db_data
+      driver_opts:
+        type: none
+        device: /home/nhayoun/data/db
+        o: bind
+
   wordpress_data:
+      name: wp_data
+      driver_opts:
+        type: none
+        device: /home/nhayoun/data/wp
+        o: bind
+
+  static_site_data:
+      name: static_data
+      driver_opts:
+        type: none
+        device: /home/nhayoun/data/static
+        o: bind
 
 
 networks:
