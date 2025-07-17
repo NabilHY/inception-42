@@ -56,6 +56,17 @@ services:
       - nginx
     volumes:
       - static_site_data:/static/
+
+  portainer:
+    container_name: portainer
+    image: portainer/portainer-ce:latest
+    networks:
+      - inception
+    restart: unless-stopped
+    ports:
+      - 9443:9443
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
   
 
 volumes:
@@ -78,6 +89,13 @@ volumes:
       driver_opts:
         type: none
         device: /home/nhayoun/data/static
+        o: bind
+
+  portainer_data:
+      name: portainer_data
+      driver_opts:
+        type: none
+        device: /home/nhayoun/data/portainer
         o: bind
 
 
