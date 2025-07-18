@@ -4,7 +4,7 @@ COMPOSE = docker compose -f srcs/docker-compose.yml
 
 build:
 	@echo "🔧 Building Docker images..."
-	@$(COMPOSE) build mariadb nginx wordpress adminer static_site portainer
+	@$(COMPOSE) build mariadb nginx wordpress adminer static_site portainer redis ftp
 	@echo "✅ Build completed."
 
 up:

@@ -5,7 +5,7 @@ echo "Starting MariaDB..."
 # mariadbd-safe --socket=/run/mysqld/mysqld.sock &
 
 # Wait longer for MariaDB to initialize
-sleep 10
+sleep 5
 
 if [ ! -d "/var/lib/mysql/mysql" ]; then
     mariadb-install-db --user=mysql --datadir=/var/lib/mysql --skip-test-db

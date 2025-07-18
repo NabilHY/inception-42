@@ -2,9 +2,9 @@
 
 set -e
 
-# source /run/secrets/wp_credentials
+chown -R www-data:www-data /var/www/html
 
-cat > /var/www/html/wp-config.php <<EOF
+cat > /var/www/html/wp-config.php << EOF
 <?php
 define( 'DB_NAME', '${WORDPRESS_DB_NAME}' );
 define( 'DB_USER', '${WORDPRESS_DB_USER}' );
@@ -12,6 +12,9 @@ define( 'DB_PASSWORD', '${WORDPRESS_DB_PASSWORD}' );
 define( 'DB_HOST', '${WORDPRESS_DB_HOST}' );
 define( 'DB_CHARSET', 'utf8' );
 define( 'DB_COLLATE', '' );
+
+define( 'WP_REDIS_HOST', 'redis');
+define('WP_REDIS_PORT', 6379);
 
 \$table_prefix = 'wp_';
 
@@ -32,6 +35,17 @@ mv wp-cli.phar /usr/local/bin/wp
 
 wp --info
 
+
+# Redis PHP Extension
+
+RUN apt-get update && apt-get install -y php-redis && \
+    apt clean && rm -rf /var/lib/apt/lists/*
+
+# RUN curl -o /tmp/redis.zip -L https://downloads.wordpress.org/plugin/redis-cache.latest-stable.zip && \
+#     unzip /tmp/redis.zip -d /var/www/html/wp-content/plugins && \
+#     chown -R www-data:www-data /var/www/html/wp-content/plugins/redis-cache
+
+
 wp core install \
   --url="${WP_SITE_URL}" \
   --title="${WP_SITE_TITLE}" \
@@ -41,6 +55,10 @@ wp core install \
   --skip-email \
   --path=/var/www/html \
   --allow-root
+
+wp plugin install redis-cache --activate --allow-root
+
+wp redis enable --allow-root
 
 wp  theme activate twentytwentyfour  --allow-root
 

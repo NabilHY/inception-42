@@ -24,6 +24,8 @@ RUN chmod +x tools/entrypoint.sh
 
 RUN mkdir -p /var/www/html
 
+RUN chmod -R 777 /var/www/html
+
 RUN curl -s https://wordpress.org/latest.tar.gz | tar -xz --strip-components=1 -C /var/www/html && \
     chown -R nobody:nogroup /var/www/html && \
     chmod -R 755 /var/www/html
