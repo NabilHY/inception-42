@@ -1,4 +1,36 @@
 services:
+  nginx:
+    container_name: nginx
+    build: ./requirements/nginx
+    image: nginx:v1.0
+    volumes:
+      - wordpress_data:/var/www/html
+      - static_site_data:/var/www/html/static/
+    restart: always
+    ports:
+      - 443:443
+    networks:
+      - inception
+
+  mariadb:
+    container_name: mariadb
+    build: ./requirements/mariadb
+    image: mariadb:v1.0
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    restart: always
+    networks:
+      - inception
+    env_file:
+      - .env
+
+  redis:
+    container_name: redis
+    image: redis:alpine
+    networks:
+      - inception
+    restart: always
+
   wordpress:
     container_name: wordpress
     build: ./requirements/wordpress
@@ -12,45 +44,21 @@ services:
     networks:
       - inception
     env_file:
-      - ../secrets/wp_credentials
-
-  mariadb:
-    container_name: mariadb
-    build: ./requirements/mariadb
-    volumes:
-      - mariadb_data:/var/lib/mysql
-    restart: always
-    networks:
-      - inception
-    env_file:
-      - ../secrets/wp_credentials
-
-  nginx:
-    container_name: nginx
-    build: ./requirements/nginx
-    volumes:
-      - wordpress_data:/var/www/html
-      - static_site_data:/var/www/html/static/
-    restart: always
-    ports:
-      - 443:443
-    depends_on:
-      - wordpress
-    networks:
-      - inception
-
+      - .env
+  
   adminer:
     container_name: adminer
-    image: adminer
+    image: adminer:latest
     networks:
       - inception
     depends_on:
       - mariadb
+      - nginx
     restart: always
-
 
   static_site:
     container_name: static_site
+    image: static:v1.0
     build: ./requirements/static_site
     networks:
       - inception
@@ -70,16 +78,11 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
 
-  redis:
-    container_name: redis
-    image: redis:alpine
-    networks:
-      - inception
-    restart: always
-
   ftp:
     container_name: ftp
     build: ./requirements/ftp
+    depends_on:
+      - wordpress
     volumes:
       - wordpress_data:/home/ftpuser
     networks:
@@ -117,7 +120,6 @@ volumes:
         type: none
         device: /home/nhayoun/data/portainer
         o: bind
-
 
 networks:
   inception:

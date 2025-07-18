@@ -14,7 +14,7 @@ RUN curl -o /etc/apk/keys/nginx_signing.rsa.pub https://nginx.org/keys/nginx_sig
 RUN mkdir -p /etc/nginx/ssl
 
 RUN openssl req -x509 -nodes -days 365 \
-  -subj "/C=MA/ST=Casablanca/L=Casa/O=Inception/CN=localhost" \
+  -subj "/C=MA/ST=Casablanca/L=Casa/O=Inception/CN=nhayoun.42.fr" \
   -newkey rsa:2048 \
   -keyout /etc/nginx/ssl/nginx.key \
   -out /etc/nginx/ssl/nginx.crt
