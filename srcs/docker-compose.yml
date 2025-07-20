@@ -26,7 +26,10 @@ services:
 
   redis:
     container_name: redis
-    image: redis:alpine
+    build: ./requirements/redis
+    image: redis:v1.0
+    ports:
+      - "6379:6379"
     networks:
       - inception
     restart: always
@@ -45,10 +48,11 @@ services:
       - inception
     env_file:
       - .env
-  
+
   adminer:
     container_name: adminer
-    image: adminer:latest
+    build: ./requirements/adminer
+    image: adminer:v1.0
     networks:
       - inception
     depends_on:
@@ -64,23 +68,27 @@ services:
       - inception
     depends_on:
       - nginx
-    volumes:
-      - static_site_data:/static/
+    ports:
+      - "8080:8080"
+    restart: always
 
   portainer:
     container_name: portainer
-    image: portainer/portainer-ce:latest
+    build: ./requirements/portainer
+    image: portainer:v1.0
     networks:
       - inception
     restart: unless-stopped
     ports:
       - 9443:9443
     volumes:
+      - portainer_data:/data
       - /var/run/docker.sock:/var/run/docker.sock
 
   ftp:
     container_name: ftp
     build: ./requirements/ftp
+    image: ftp:v1.0
     depends_on:
       - wordpress
     volumes:

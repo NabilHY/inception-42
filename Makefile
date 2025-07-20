@@ -3,6 +3,11 @@ COMPOSE = docker compose -f srcs/docker-compose.yml
 .PHONY: build up down clean restart logs ps psa status
 
 build:
+	@echo "Creating Local Volumes ..."
+	mkdir -p /home/nhayoun/data/db > /dev/null 2>&1 || true
+	mkdir -p /home/nhayoun/data/wp > /dev/null 2>&1 || true
+	mkdir -p /home/nhayoun/data/static > /dev/null 2>&1 || true
+	mkdir -p /home/nhayoun/data/portainer > /dev/null 2>&1 || true
 	@echo "🔧 Building Docker images..."
 	@$(COMPOSE) build mariadb nginx wordpress adminer static_site portainer redis ftp
 	@echo "✅ Build completed."
@@ -51,4 +56,3 @@ nuke:
 	@echo "💣 Nuke all containers, images, and volumes..."
 	@docker system prune -a --volumes -f
 	@echo "✅ Nuke completed."
-

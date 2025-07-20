@@ -1,8 +1,11 @@
-FROM debian:bullseye
+FROM alpine:latest
 
-RUN apt-get update -y \
-    && apt-get install -y wget tar make build-essential
+RUN apk add --no-cache wget tar make build-base redis
 
-COPY /tools/entrypoint.sh /tools/entrypoint.sh
+COPY ./tools/entrypoint.sh ./entrypoint.sh
 
-ENTRYPOINT [ "/tools/entrypoint.sh" ]
+RUN chmod +x ./entrypoint.sh
+
+EXPOSE 6379
+
+ENTRYPOINT [ "./entrypoint.sh" ]

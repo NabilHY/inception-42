@@ -1,7 +1,10 @@
-#!/bin/bash
+#!/bin/sh
 
-set -e
+redis-cli -v
 
-wget http://download.redis.io/redis-stable.tar.gz
+echo "Starting Redis..."
 
-tar xvzf redis-stable.tar.gz
+redis-server --protected-mode no &
+
+# Keep the container running
+tail -f /dev/null

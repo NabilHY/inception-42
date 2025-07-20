@@ -22,6 +22,3 @@ fi
 echo "DB Injected successfully"
 
 exec mariadbd --user=mysql
-
-
-
