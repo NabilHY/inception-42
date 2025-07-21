@@ -5,7 +5,6 @@ services:
     image: nginx:v1.0
     volumes:
       - wordpress_data:/var/www/html
-      - static_site_data:/var/www/html/static/
     restart: always
     ports:
       - 443:443

@@ -41,11 +41,6 @@ wp --info
 RUN apt-get update && apt-get install -y php-redis && \
     apt clean && rm -rf /var/lib/apt/lists/*
 
-# RUN curl -o /tmp/redis.zip -L https://downloads.wordpress.org/plugin/redis-cache.latest-stable.zip && \
-#     unzip /tmp/redis.zip -d /var/www/html/wp-content/plugins && \
-#     chown -R www-data:www-data /var/www/html/wp-content/plugins/redis-cache
-
-
 wp core install \
   --url="${WP_SITE_URL}" \
   --title="${WP_SITE_TITLE}" \
@@ -61,6 +56,5 @@ wp plugin install redis-cache --activate --allow-root
 wp redis enable --allow-root
 
 wp  theme activate twentytwentyfour  --allow-root
-
 
 exec "$@"
