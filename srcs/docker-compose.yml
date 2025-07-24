@@ -32,6 +32,8 @@ services:
     networks:
       - inception
     restart: always
+    volumes:
+      - wordpress_data:/var/www/html
 
   wordpress:
     container_name: wordpress

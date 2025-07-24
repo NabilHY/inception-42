@@ -12,4 +12,4 @@ RUN chmod -R 755 /static-site/index.html
 
 RUN chmod -R 755 /static-site/styles.css
 
-CMD ["python3", "-m", "http.server", "8080"]
+CMD ["python3", "-m", "http.server", "8081"]
