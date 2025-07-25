@@ -1,11 +1,13 @@
 #!/bin/sh
+
 set -e
 
-RUN adduser -D ftpuser && echo "ftpuser:ftppassword" | chpasswd
-RUN mkdir -p /home/ftpuser && chown ftpuser:ftpuser /home/ftpuser
+addgroup $FTP_USER
+adduser -D -G $FTP_USER $FTP_USER
+echo "$FTP_USER:$FTP_PASS" | chpasswd >/dev/null 2>&1
 
-RUN chmod 755 /home/ftpuser
+mkdir -p /home/$FTP_USER
+chown $FTP_USER:$FTP_USER /home/$FTP_USER
+chmod 755 /home/$FTP_USER
 
-RUN chown ftpuser:ftpuser /home/ftpuser
-
-/usr/sbin/vsftpd /etc/vsftpd/vsftpd.conf
+exec /usr/sbin/vsftpd /etc/vsftpd/vsftpd.conf
