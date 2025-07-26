@@ -22,7 +22,7 @@ The project must be fully contained in Docker and configured using Docker Compos
 
 The following diagram illustrates the full Docker-based architecture for the Inception project:
 
-![Inception Docker Infrastructure](incep.png)
+![Inception Docker Infrastructure](incp.png)
 
 ## Prerequisites
 
@@ -37,7 +37,7 @@ Ensure that your system is configured with Docker support and that you have a ru
 
 ## Docker Setup 
 ### File Structure
-![Structure](syruct.png)
+![Structure](struct.png)
 
 
 Each service has its own dedicated folder under srcs/requirements/, containing the necessary Dockerfiles and configuration files for building the container images.
