@@ -37,18 +37,8 @@ Ensure that your system is configured with Docker support and that you have a ru
 
 ## Docker Setup 
 ### File Structure
+![Structure](syruct.png)
 
-├── Makefile
-├── .env
-├── srcs/
-│   ├── requirements/
-│   │   ├── mariadb/
-│   │   ├── nginx/
-│   │   ├── wordpress/
-│   │   ├── static_site/
-│   │   ├── ftp/
-│   │   └── adminer/
-│   ├── docker-compose.yml
 
 Each service has its own dedicated folder under srcs/requirements/, containing the necessary Dockerfiles and configuration files for building the container images.
 
