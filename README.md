@@ -24,6 +24,43 @@ The following diagram illustrates the full Docker-based architecture for the Inc
 
 ![Inception Docker Infrastructure](incp.png)
 
+## Models
+In this Docker Compose configuration, the volumes and network models are essential components that enable data persistence, inter-container communication, and isolated service orchestration. Here's a breakdown of their roles and technical significance:
+
+🧱 Volumes Model
+Docker volumes in this project are declared using the driver_opts method with the bind type. This ensures that each service has persistent storage that is mapped to a specific directory on the host system. Unlike anonymous volumes that disappear when a container is removed, these named bind mounts ensure data survives container or host restarts. They are especially useful for stateful services like databases and CMS.
+
+Declared Volumes:
+mariadb_data → /home/nhayoun/data/db:
+Binds to the MariaDB container at /var/lib/mysql, this directory holds the actual database files. Persisting this volume ensures that the database retains all data even after container deletion or rebuild.
+
+wordpress_data → /home/nhayoun/data/wp:
+This volume is shared between nginx, wordpress, ftp, and even redis (for convenience). It stores the WordPress site files (wp-content, themes, uploads, etc.) and is the most reused volume in the stack, which allows services to interact with and serve WordPress content seamlessly.
+
+static_site_data → /home/nhayoun/data/static:
+Mounted inside the static site container to serve prebuilt static assets like HTML, CSS, or JS files.
+
+portainer_data → /home/nhayoun/data/portainer:
+This is the persistent storage for Portainer's internal configuration and metadata. Without this, all UI settings, endpoints, and container history would be lost on container restart.
+
+/var/run/docker.sock:/var/run/docker.sock (Portainer):
+This is a special bind mount that allows Portainer to communicate with the Docker daemon directly, giving it full control and visibility over all containers on the host.
+
+Volumes provide the necessary stateful behavior to otherwise stateless containers and form the backbone for data integrity in this stack.
+
+🌐 Network Model
+This project uses a single user-defined bridge network called inception. Unlike Docker’s default bridge network, user-defined bridge networks offer name-based DNS resolution, which means that services can communicate with each other using their container names as hostnames (e.g., nginx can reach wordpress:9000).
+
+This shared network isolates all containers from the host unless explicitly mapped via ports, and enables:
+
+Service discovery: For example, NGINX uses proxy_pass to forward traffic to adminer:8080, static_site:8081, or portainer:9443.
+
+Internal communication without exposing all services to the host.
+
+Security boundaries: Only one public-facing service (nginx) is exposed directly to the outside world. The rest communicate through the shared inception network and are protected from external interference unless explicitly published.
+
+By leveraging this bridge network, the architecture is modular, secure, and scalable, allowing additional services to be added without port conflicts or isolation concerns.
+
 ## Prerequisites
 
 Before starting, ensure the following tools are installed on your virtual machine:
