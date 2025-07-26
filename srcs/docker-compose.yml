@@ -118,13 +118,6 @@ volumes:
         device: /home/nhayoun/data/wp
         o: bind
 
-  static_site_data:
-      name: static_data
-      driver_opts:
-        type: none
-        device: /home/nhayoun/data/static
-        o: bind
-
   portainer_data:
       name: portainer_data
       driver_opts:
